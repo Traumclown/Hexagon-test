@@ -17,7 +17,7 @@ public class Waypoints : MonoBehaviour {
             {
          //       Debug.Log(wayPoints[i].GetComponent<MeshRenderer>().material.name);
             }
-            if (wayPoints[i].GetComponent<Renderer>()!=null)
+            if (wayPoints[i].GetComponent<MeshRenderer>()!=null)
             {
                 Debug.Log(wayPoints[i].GetComponent<Renderer>());
 

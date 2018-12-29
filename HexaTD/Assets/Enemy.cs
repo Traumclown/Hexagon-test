@@ -6,7 +6,7 @@ public class Enemy : MonoBehaviour {
 
     public float speed = 10f;
     private Transform target;
-    private int wavepointindex = 0;
+    private int waypointindex = 0;
 
 	// Use this for initialization
 	void Start () {
@@ -27,14 +27,15 @@ public class Enemy : MonoBehaviour {
     }
     void GetNextWaypoint()
     {
-        if (wavepointindex>=Waypoints.wayPoints.Length-1)
+
+        if (waypointindex>=Waypoints.wayPoints.Length-1)
         {
             Destroy(gameObject);
-
+            return;
         }
-        wavepointindex++;
-        target = Waypoints.wayPoints[wavepointindex];
 
+        waypointindex++;
+        target = Waypoints.wayPoints[waypointindex];
 
     }
 }
