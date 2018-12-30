@@ -2,25 +2,41 @@
 //using System.Collections.Generic;
 using UnityEngine;
 
-public class Waypoints : MonoBehaviour {
+public class Waypoints : MonoBehaviour
+{
 
 
     public static Transform[] wayPoints;
     public void Awake()
     {
-        //Debug
-        wayPoints = new Transform[transform.childCount];
+        int PathFieldCount = 0;
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            if (transform.GetChild(i).tag == "path")
+            {
+                PathFieldCount++;
+            }
+        }
+
+        wayPoints = new Transform[PathFieldCount];
+
+
+        //wayPoints[i] = transform.GetChild(i);
+        // if (wayPoints[i].GetComponent<MeshFilter>().mesh!=null)
+        // Debug.Log(wayPoints[i].GetComponent<MeshRenderer>().material.name);
+        // Debug.Log("##### " + wayPoints[i].GetComponent<Renderer>().material.name);
+
+
+
         for (int i = 0; i < wayPoints.Length; i++)
         {
-            wayPoints[i] = transform.GetChild(i);
-           // if (wayPoints[i].GetComponent<MeshFilter>().mesh!=null)
-            {
-         //       Debug.Log(wayPoints[i].GetComponent<MeshRenderer>().material.name);
-            }
-            if (wayPoints[i].GetComponent<MeshRenderer>()!=null)
-            {
-                Debug.Log(wayPoints[i].GetComponent<Renderer>());
 
+
+
+            if (transform.GetChild(i).tag == "path")
+            {
+                wayPoints[i] = transform.GetChild(i);
+                Debug.Log("##### " + wayPoints[i].tag);
             }
 
         }
