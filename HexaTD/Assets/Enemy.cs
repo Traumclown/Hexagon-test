@@ -13,7 +13,7 @@ public class Enemy : MonoBehaviour
     void Start()
     {
         target = Waypoints.wayPoints[0];
-
+        Debug.Log(target);
     }
 
     // Update is called once per frame
