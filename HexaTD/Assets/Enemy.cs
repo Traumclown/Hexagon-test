@@ -12,6 +12,7 @@ public class Enemy : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        if (Waypoints.wayPoints.Length == 0) { return; }
         target = Waypoints.wayPoints[0];
         Debug.Log(target);
     }
@@ -19,6 +20,7 @@ public class Enemy : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (!target) { return; }
         Vector3 dir = target.position - transform.position;
         transform.Translate(dir.normalized * speed * Time.deltaTime, Space.World);
 
