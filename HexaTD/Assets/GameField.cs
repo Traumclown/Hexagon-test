@@ -44,25 +44,28 @@ public class GameField : MonoBehaviour
         int x = start.x,
             y = start.y;
 
-        while (true)
+        while (!(x == end.x && y == end.y))
         {
-            if (field[x, y].type != FieldType.start && field[x, y].type != FieldType.end)
-                field[x, y].type = FieldType.path;
-
             if (x < end.x)
-                x++;
-            else if (x > end.x)
-                x--;
-            else
             {
-                if (y < end.y)
-                    y++;
-                else if (y > end.y)
-                    y--;
+                x++;
             }
 
-            if (x == end.x && y == end.y)
-                break;
+            if (x > end.x)
+            {
+                x--;
+            }
+
+            if (y < end.y)
+                y++;
+
+            if (y > end.y)
+                y--;
+
+            if (field[x, y].type != FieldType.start && field[x, y].type != FieldType.end)
+            {
+                field[x, y].type = FieldType.path;
+            }
         }
     }
 
