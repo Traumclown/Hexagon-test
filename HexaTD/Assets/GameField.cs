@@ -5,11 +5,13 @@ using UnityEngine;
 public class GameField : MonoBehaviour
 {
     public Field fieldPrefab;
-    public enum FieldType { start, end, path, empty }
+    public enum FieldType { start, end, path, plain }
 
-    void Start()
+
+    public static Field[,] gameField;
+    void Awake()
     {
-        Field[,] field = InitField(5, 5);
+        gameField = InitField(5, 5);
     }
 
     Field[,] InitField(int width, int length)
@@ -31,16 +33,12 @@ public class GameField : MonoBehaviour
         Debug.Log("end " + 0 + ", " + randy);
         field[randx, 0].type = FieldType.start;
         field[0, randy].type = FieldType.end;
-        MakePath(field);
+        //MakePath(field);
         return field;
     }
 
-    void Update() // Update is called once per frame
-    {
 
-    }
-
-    void MakePath(Field[,] field)
+    void MakePath(Field[,] field) // TODO
     {
         //Field start = GetStartField(field);
         //Field end = GetEndField(field);
@@ -63,48 +61,48 @@ public class GameField : MonoBehaviour
                 }
             }
         }
-
-
     }
 
-    Field GetEndField(Field[,] field)
+    public static Field GetEndField()
     {
-        foreach (Field f in field)
-        {
+        foreach (Field f in gameField)
             if (f.type == FieldType.end)
-            {
                 return f;
-            }
-        }
         return null;
     }
-    Field GetStartField(Field[,] field)
+    public static Field GetStartField()
     {
-        foreach (Field f in field)
-        {
+        foreach (Field f in gameField)
             if (f.type == FieldType.start)
-            {
                 return f;
-            }
-        }
         return null;
     }
-    Field[] GetPathFields(Field[,] field)
+    public static Field[] GetPathFields()
     {
         int pathCount = 0;
-        foreach (Field f in field)
+        foreach (Field f in gameField)
             if (f.type == FieldType.path)
                 pathCount++;
 
         Field[] path = new Field[pathCount];
         int counter = 0;
-        foreach (Field f in field)
-        {
-            if (f.type == FieldType.path)
-            {
+        foreach (Field f in gameField)
+            if (f.type == FieldType.path)// TODO counter
                 path[counter] = f;
-            }
-        }
+
         return path;
+    }
+    public static Transform[] GetPathFieldsAsTransform()
+    {
+        Field[] path = GetPathFields();
+        Transform[] pathAsTransform = new Transform[path.Length];
+        int counter = 0;
+        foreach (Field f in path)
+        {
+            pathAsTransform[counter] = f.transform;
+            counter++;
+        }
+
+        return pathAsTransform;
     }
 }

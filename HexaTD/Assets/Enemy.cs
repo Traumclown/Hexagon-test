@@ -1,46 +1,33 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
+    private Transform[] path;
 
-    public float speed = 10f;
-    private Transform target;
-    private int waypointindex = 0;
-
-    // Use this for initialization
     void Start()
     {
-        if (Waypoints.wayPoints.Length == 0) { return; }
-        target = Waypoints.wayPoints[0];
-        Debug.Log(target);
+        path = GameField.GetPathFieldsAsTransform();
     }
 
-    // Update is called once per frame
+    private int pathIndex = 0;
     void Update()
     {
-        if (!target) { return; }
-        Vector3 dir = target.position - transform.position;
-        transform.Translate(dir.normalized * speed * Time.deltaTime, Space.World);
+        if (path == null) return;
 
-        if (Vector3.Distance(transform.position, target.position) <= 0.2f)
-        {
-            GetNextWaypoint();
-
-        }
-    }
-    void GetNextWaypoint()
-    {
-
-        if (waypointindex >= Waypoints.wayPoints.Length - 1)
+        //Debug.Log("path.Length: " + path.Length);
+        //Debug.Log("pathIndex: " + pathIndex);
+        if (pathIndex >= path.Length - 1)
         {
             Destroy(gameObject);
             return;
         }
 
-        waypointindex++;
-        target = Waypoints.wayPoints[waypointindex];
+        Transform target = path[pathIndex];
+        if (Vector3.Distance(transform.position, target.position) <= 0.2f)
+            target = path[pathIndex++];
 
+        float speed = 10f;
+        Vector3 dir = target.position - transform.position;
+        transform.Translate(dir.normalized * speed * Time.deltaTime, Space.World);
     }
 }
