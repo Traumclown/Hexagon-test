@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class GameField : MonoBehaviour
 {
@@ -12,6 +10,7 @@ public class GameField : MonoBehaviour
     void Awake()
     {
         gameField = InitField(5, 5);
+        MakePath(gameField);
     }
 
     Field[,] InitField(int width, int length)
@@ -24,42 +23,46 @@ public class GameField : MonoBehaviour
                 float pos_x = x * 1.8f - (y % 2 == 0 ? 0.9f : 0);
                 float pos_y = y * 1.6f;
                 field[x, y] = Instantiate(fieldPrefab, new Vector3(pos_x, 2, pos_y), fieldPrefab.transform.rotation);
+                field[x, y].x = x;
+                field[x, y].y = y;
             }
         }
         fieldPrefab.GetComponent<Renderer>().enabled = false;
-        int randx = Random.Range(0, width);
-        int randy = Random.Range(0, length);
-        Debug.Log("start " + randx + ", " + 0);
-        Debug.Log("end " + 0 + ", " + randy);
-        field[randx, 0].type = FieldType.start;
-        field[0, randy].type = FieldType.end;
-        //MakePath(field);
+        int randStart = Random.Range(0, width);
+        int randEnd = Random.Range(0, width);
+        field[randStart, 0].type = FieldType.start;
+        field[randEnd, length - 1].type = FieldType.end;
         return field;
     }
 
 
-    void MakePath(Field[,] field) // TODO
+    void MakePath(Field[,] field)
     {
-        //Field start = GetStartField(field);
-        //Field end = GetEndField(field);
-        int endX, endY, startX, startY;
-        for (int i = 0; i < field.GetLength(0); i++)
+        Field start = GetStartField();
+        Field end = GetEndField();
+
+        int x = start.x,
+            y = start.y;
+
+        while (true)
         {
-            for (int p = 0; p < field.GetLength(1); p++)
+            if (field[x, y].type != FieldType.start && field[x, y].type != FieldType.end)
+                field[x, y].type = FieldType.path;
+
+            if (x < end.x)
+                x++;
+            else if (x > end.x)
+                x--;
+            else
             {
-                if (field[i, p].type == FieldType.start)
-                {
-                    startX = i;
-                    startY = p;
-                    Debug.Log("start " + i + ", " + p);
-                }
-                else if (field[i, p].type == FieldType.end)
-                {
-                    endX = i;
-                    endY = p;
-                    Debug.Log("end " + i + ", " + p);
-                }
+                if (y < end.y)
+                    y++;
+                else if (y > end.y)
+                    y--;
             }
+
+            if (x == end.x && y == end.y)
+                break;
         }
     }
 
@@ -87,8 +90,11 @@ public class GameField : MonoBehaviour
         Field[] path = new Field[pathCount];
         int counter = 0;
         foreach (Field f in gameField)
-            if (f.type == FieldType.path)// TODO counter
+            if (f.type == FieldType.path)
+            {
                 path[counter] = f;
+                counter++;
+            }
 
         return path;
     }
