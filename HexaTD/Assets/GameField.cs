@@ -1,16 +1,17 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 public class GameField : MonoBehaviour
 {
     public Field fieldPrefab;
     public enum FieldType { start, end, path, plain }
 
-
-    public static Field[,] gameField;
+    private static Field[,] gameField;
+    private static Field[] path;
     void Awake()
     {
         gameField = InitField(5, 5);
-        MakePath(gameField);
+        path = MakePath(gameField);
     }
 
     Field[,] InitField(int width, int length)
@@ -28,15 +29,16 @@ public class GameField : MonoBehaviour
             }
         }
         fieldPrefab.GetComponent<Renderer>().enabled = false;
+
         int randStart = Random.Range(0, width);
         int randEnd = Random.Range(0, width);
         field[randStart, 0].type = FieldType.start;
         field[randEnd, length - 1].type = FieldType.end;
+
         return field;
     }
 
-
-    void MakePath(Field[,] field)
+    Field[] MakePath(Field[,] field)
     {
         Field start = GetStartField();
         Field end = GetEndField();
@@ -44,29 +46,27 @@ public class GameField : MonoBehaviour
         int x = start.x,
             y = start.y;
 
+        List<Field> path = new List<Field>();
+
         while (!(x == end.x && y == end.y))
         {
             if (x < end.x)
-            {
                 x++;
-            }
-
             if (x > end.x)
-            {
                 x--;
-            }
-
             if (y < end.y)
                 y++;
-
             if (y > end.y)
                 y--;
 
             if (field[x, y].type != FieldType.start && field[x, y].type != FieldType.end)
             {
                 field[x, y].type = FieldType.path;
+                path.Add(field[x, y]);
             }
         }
+
+        return path.ToArray();
     }
 
     public static Field GetEndField()
@@ -76,6 +76,7 @@ public class GameField : MonoBehaviour
                 return f;
         return null;
     }
+
     public static Field GetStartField()
     {
         foreach (Field f in gameField)
@@ -83,33 +84,19 @@ public class GameField : MonoBehaviour
                 return f;
         return null;
     }
+
     public static Field[] GetPathFields()
     {
-        int pathCount = 0;
-        foreach (Field f in gameField)
-            if (f.type == FieldType.path)
-                pathCount++;
-
-        Field[] path = new Field[pathCount];
-        int counter = 0;
-        foreach (Field f in gameField)
-            if (f.type == FieldType.path)
-            {
-                path[counter] = f;
-                counter++;
-            }
-
         return path;
     }
+
     public static Transform[] GetPathFieldsAsTransform()
     {
         Field[] path = GetPathFields();
         Transform[] pathAsTransform = new Transform[path.Length];
-        int counter = 0;
-        foreach (Field f in path)
+        for (int i = 0; i < path.Length; i++)
         {
-            pathAsTransform[counter] = f.transform;
-            counter++;
+            pathAsTransform[i] = path[i].transform;
         }
 
         return pathAsTransform;
