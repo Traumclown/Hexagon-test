@@ -18,17 +18,48 @@ public class GameField : MonoBehaviour
     {
         Field[,] field = new Field[width, length];
         for (int y = 0; y < length; y++)
-        {
             for (int x = 0; x < width; x++)
             {
-                float pos_x = x * 1.8f - (y % 2 == 0 ? 0.9f : 0);
+                bool even = y % 2 == 0;
+                float pos_x = x * 1.8f - (even ? 0.9f : 0);
                 float pos_y = y * 1.6f;
                 field[x, y] = Instantiate(fieldPrefab, new Vector3(pos_x, 2, pos_y), fieldPrefab.transform.rotation);
                 field[x, y].x = x;
                 field[x, y].y = y;
             }
-        }
         fieldPrefab.GetComponent<Renderer>().enabled = false;
+
+        for (int y = 0; y < length; y++)
+            for (int x = 0; x < width; x++)
+            {
+                bool even = y % 2 == 0;
+                Field[] neighbours = new Field[6];
+                if (y - 1 >= 0)
+                    neighbours[0] = field[x, y - 1];
+                if (x - 1 >= 0)
+                    neighbours[1] = field[x - 1, y];
+                if (x + 1 < width)
+                    neighbours[2] = field[x + 1, y];
+                if (y + 1 < length)
+                    neighbours[3] = field[x, y + 1];
+
+                if (!even)
+                {
+                    if (x + 1 < width && y + 1 < length)
+                        neighbours[4] = field[x + 1, y + 1];
+                    if (x + 1 < width && y - 1 >= 0)
+                        neighbours[5] = field[x + 1, y - 1];
+                }
+                else
+                {
+                    if (y - 1 >= 0 && x - 1 >= 0)
+                        neighbours[4] = field[x - 1, y - 1];
+                    if (x - 1 >= 0 && y + 1 < width)
+                        neighbours[5] = field[x - 1, y + 1];
+                }
+
+                field[x, y].neighbours = neighbours;
+            }
 
         int randStart = Random.Range(0, width);
         int randEnd = Random.Range(0, width);
@@ -50,11 +81,11 @@ public class GameField : MonoBehaviour
 
         while (!(x == end.x && y == end.y))
         {
-            if (x < end.x)
+            if (x < end.x) // && field[x, y].neighbours
                 x++;
-            if (x > end.x)
+            else if (x > end.x)
                 x--;
-            if (y < end.y)
+            else if (y < end.y)
                 y++;
             if (y > end.y)
                 y--;
