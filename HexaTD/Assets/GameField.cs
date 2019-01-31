@@ -71,33 +71,47 @@ public class GameField : MonoBehaviour
 
     Field[] MakePath(Field[,] field)
     {
-        Field start = GetStartField();
-        Field end = GetEndField();
-
-        int x = start.x,
-            y = start.y;
-
         List<Field> path = new List<Field>();
+        Field closestNeighbour = GetClosestNeighbourToEnd(GetStartField());
+        path.Add(closestNeighbour);
 
-        while (!(x == end.x && y == end.y))
+        while (path[path.Count - 1].type != FieldType.end)
         {
-            if (x < end.x) // && field[x, y].neighbours
-                x++;
-            else if (x > end.x)
-                x--;
-            else if (y < end.y)
-                y++;
-            if (y > end.y)
-                y--;
-
-            if (field[x, y].type != FieldType.start && field[x, y].type != FieldType.end)
+            path.Add(closestNeighbour);
+            if (closestNeighbour.type == FieldType.plain)
             {
-                field[x, y].type = FieldType.path;
-                path.Add(field[x, y]);
+                closestNeighbour.type = FieldType.path;
             }
+            else if (closestNeighbour.type == FieldType.end)
+            {
+                return path.ToArray();
+            }
+
+            closestNeighbour = GetClosestNeighbourToEnd(closestNeighbour);
         }
 
-        return path.ToArray();
+        throw new System.Exception("should not be reachable has been breached");
+    }
+
+    private Field GetClosestNeighbourToEnd(Field field)
+    {
+        float closestDistance = Vector3.Distance(transform.position, GetEndField().transform.position);
+        Field closestNeighbour = null;
+        foreach (Field neighbour in field.neighbours)
+        {
+            if (neighbour == null)
+                continue;
+
+            float distanceNeighbourEnd = Vector3.Distance(neighbour.transform.position, GetEndField().transform.position);
+            if (distanceNeighbourEnd < closestDistance)
+            {
+                closestNeighbour = neighbour;
+                closestDistance = distanceNeighbourEnd;
+            }
+        }
+        if (closestNeighbour == null)
+            throw new System.Exception("no closest Neighbour found");
+        return closestNeighbour;
     }
 
     public static Field GetEndField()
@@ -118,6 +132,8 @@ public class GameField : MonoBehaviour
 
     public static Field[] GetPathFields()
     {
+        if (path == null)
+            throw new System.Exception("no Path set when asked for it");
         return path;
     }
 

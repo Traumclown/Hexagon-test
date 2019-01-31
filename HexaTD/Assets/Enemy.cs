@@ -15,6 +15,9 @@ public class Enemy : MonoBehaviour
     private Transform target;
     void Update()
     {
+        if (target == null)
+            throw new System.Exception("no target set");
+
         float speed = 2f;
         Vector3 dir = target.position - transform.position;
         transform.Translate(dir.normalized * speed * Time.deltaTime, Space.World);
