@@ -18,11 +18,7 @@ public class Enemy : MonoBehaviour
     {
         newRound = true;
     }
-    public void OnMouseDown()
-    {
-        OnRoundUpdate();
 
-    }
     private int pathIndex = 1;
     private Transform target;
     void Update()
