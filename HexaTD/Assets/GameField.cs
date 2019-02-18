@@ -110,7 +110,7 @@ public class GameField : MonoBehaviour
             }
         }
         if (closestNeighbour == null)
-            throw new System.Exception("no closest Neighbour found");
+            throw new System.Exception("no closest Neighbour found Mothefucker");
         return closestNeighbour;
     }
 
